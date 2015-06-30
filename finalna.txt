@@ -1,0 +1,53 @@
+{
+
+    var i&;
+    var lAccountName$ := '23550025503';
+    var lFieldNames$[] := ['CUSTOMER_NODE_ID'];
+    var lFieldValues?[];
+
+    fT2_AccountFetchByName&(lAccountName$, 
+                                   lFieldNames$[], 
+                                   lFieldValues?[]);
+    #print (lFieldValues?[0]);                               
+
+
+
+    var lSQLText$ := 'SELECT SERVICE_ID,LAST_MODIFIED FROM SERVICE_HISTORY  WHERE CUSTOMER_NODE_ID =:cust';
+    var lParamNames$[]:= ['cust'];
+    var lParamValues?[]:= [lFieldValues?[0]];
+    var lFromRowNr& := 1;
+    var lToRowNr& := -1;
+    var lRows?[];
+
+    biSQLQuery&(lSQLText$, 
+                       lParamNames$[], 
+                       lParamValues?[], 
+                       lFromRowNr&, 
+                       lToRowNr&, 
+                       lRows?[]);
+    #print (lRows?[0]);                   
+   
+    
+     for(i& := 0; i& < length(lRows?[]); i&++){                   
+    # print(lRows?[i&][0]);
+   # print(lRows?[i&][1]);
+    
+
+    var lserviceId& := to_integer(lRows?[i&][0]);
+    var leffectiveDate~ := current_date();
+    var llastModified~ := to_date(lRows?[i&][1]);
+    var lfieldNames1$[] := ['GENERAL_5'];
+    var lfieldValues1?[] := ['2'];
+
+    try {fEV_ServiceUpdate&(lserviceId&, 
+                              leffectiveDate~, 
+                              llastModified~, 
+                              lfieldNames1$[], 
+                              lfieldValues1?[]);
+       return ('true');}
+       except {print ('Error occurred'); return ('false')};
+    
+    }
+
+   
+}
